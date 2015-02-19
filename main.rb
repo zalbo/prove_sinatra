@@ -1,12 +1,27 @@
-require 'rubygems'
+
 require 'sinatra'
+require 'pry'
+#  binding.pry
 
 
 
-get "/" do
-  erb :index
+
+
+
+before do
+  @messages = []
 end
 
+get "/" do
+  @messages << params[:message]
+ erb :index
+end
+
+
+
 post "/" do
+
+  @messages << params[:message]
+
   erb :index
 end

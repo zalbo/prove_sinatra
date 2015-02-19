@@ -3,4 +3,10 @@
   <input type="submit" value="Inserisci ">
 </form>
 
-<%= params[:message]  %>
+
+
+
+<% @messages.each do |message| %>
+<p><%= message %></p>
+
+<%end%>
