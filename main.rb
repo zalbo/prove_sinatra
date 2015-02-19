@@ -1,27 +1,25 @@
 
 require 'sinatra'
 require 'pry'
-#  binding.pry
 
 
+class Form
 
-
-
-
-before do
-  @messages = []
+   attr_reader :array_form
+   def initialize
+     @array_form = []
+   end
 end
+
+f = Form.new
 
 get "/" do
-  @messages << params[:message]
- erb :index
+  @messages = f.array_form
+  erb :index
 end
 
-
-
 post "/" do
-
-  @messages << params[:message]
-
+  @messages = f.array_form
+  f.array_form << params[:message]
   erb :index
 end
