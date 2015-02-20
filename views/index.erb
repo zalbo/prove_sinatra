@@ -1,12 +1,15 @@
 <form action="/" method="POST">
-  <input type="text" name="message" value=<%= params[:message]  %> >
+  <h3> Messaggio </h3>
+  <input type="text" name="message" value=<%= params[:message] %>>
+  <h3> Email </h3>
+  <input type="text" name="email" value=<%= params[:email] %>>
   <input type="submit" value="Inserisci ">
 </form>
 
 
+<%[@messages , @emails ].each do | a , b | %>
 
+<p><%= a %> </p> 
+<p><%= b %> </p>
 
-<% @messages.each do |message| %>
-<p><%= message %></p>
-
-<%end%>
+<% end %>
