@@ -5,27 +5,41 @@ require 'pry'
 
 class Form
 
-   attr_reader :array_message , :array_mail
+   attr_reader :messages
    def initialize
-     @array_message = []
-     @array_mail = []
+     @messages = []
    end
+end
+
+def is_a_valid_email?(email)
+    email_regex = %r{
+      ^ # Start of string
+      [0-9a-z] # First character
+      [0-9a-z.+]+ # Middle characters
+      [0-9a-z] # Last character
+      @ # Separating @ character
+      [0-9a-z] # Domain name begin
+      [0-9a-z.-]+ # Domain name middle
+      [0-9a-z] # Domain name end
+      $ # End of string
+    }xi # Case insensitive
+
+    (email =~ email_regex)
 end
 
 f = Form.new
 
 get "/" do
-  @messages = f.array_message
-  @emails = f.array_mail
+  @messages = f.messages
   erb :index
 end
 
 post "/" do
-  @messages = f.array_message
-  @emails = f.array_mail
-  f.array_message << params[:message]
-  f.array_mail << params[:email]
-
-
-  erb :index
+  @messages = f.messages
+  if is_a_valid_email?(params[:email]) == 0
+    @messages << {email:params[:email] , message:params[:message]}
+  else
+    @error_message = "errore email non valida, riscrivere"
+  end
+erb :index
 end

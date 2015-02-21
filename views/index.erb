@@ -6,10 +6,9 @@
   <input type="submit" value="Inserisci ">
 </form>
 
+<%= @error_message %>
 
-<%[@messages , @emails ].each do | a , b | %>
-
-<p><%= a %> </p> 
-<p><%= b %> </p>
-
+<% @messages.reverse_each do |m| %>
+<p><%= m[:email] %> </p>
+<p><%= m[:message] %> </p>
 <% end %>
