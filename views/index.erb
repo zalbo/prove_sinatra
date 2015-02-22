@@ -3,8 +3,7 @@
   <input type="text" name="email" value=<%= params[:email] %>>
   <%= @errors[:email] %>
   <h3> Messaggio </h3>
-  <textarea rows="4" cols="50" input type="text" name="message" value=<%= params[:message] %>>
-  </textarea>
+  <textarea rows="4" cols="50" input type="text" name="message" ><%= params[:message] %></textarea>
   <input type="submit" value="Inserisci ">
   <%= @errors[:message] %>
 </form>
@@ -13,6 +12,10 @@
 
 <% @messages.reverse_each do |m| %>
 <hr>
+
 <p><%= m[:email] %> </p>
 <p><%= m[:message] %> </p>
+<form action="/delete" method="POST">
+  <input type="submit" value="x">
+</form>
 <% end %>
