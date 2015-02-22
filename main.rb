@@ -25,8 +25,6 @@ class Form
 
   def validate_form(params)
     errors = {}
-    params[:email].gsub(/\s+/, " ").strip
-    params[:message].gsub(/\s+/, " ").strip
     if params[:email] == ""
       errors[:email] = "email is empty"
     end
@@ -39,9 +37,6 @@ class Form
       errors[:message] = "message is empty"
     end
 
-
-
-    #binding.pry
     errors
   end
 
@@ -62,21 +57,13 @@ post "/" do
   @errors = f.validate_form(params)
 
   if @errors.empty?
-    @messages << {email:params[:email] , message:params[:message]}
+    @messages << {email:params[:email] , message:params[:message].strip}
   end
 
   erb :index
 end
 
-
-get "/delete" do
-  redirect '/'
-end
-
-post "/delete" do
-  number_message = f.messages.count - 1
-  f.messages[number_message].delete(:"email")
-  f.messages[number_message].delete(:"message")
-
-  redirect '/'
+get "/delete/:id" do
+ f.messages.delete_at(params[:id].to_i)
+ redirect('/')
 end

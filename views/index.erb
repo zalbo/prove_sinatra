@@ -10,12 +10,10 @@
 
 
 
-<% @messages.reverse_each do |m| %>
+<% @messages.to_enum.with_index.reverse_each do |m, i| %>
 <hr>
 
 <p><%= m[:email] %> </p>
 <p><%= m[:message] %> </p>
-<form action="/delete" method="POST">
-  <input type="submit" value="x">
-</form>
+<p><a href="/delete/<%= i %>">delete<a/></p>
 <% end %>
