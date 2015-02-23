@@ -24,8 +24,9 @@ class Form
     return (email =~ email_regex) == 0
   end
 
-  def increment_id
+  def id
     @id += 1
+    @id
   end
 
   def validate_form(params)
@@ -60,7 +61,6 @@ post "/" do
   @errors = f.validate_form(params)
   if @errors.empty?
     @messages << {email:params[:email] , message:params[:message].strip , id: f.id}
-    f.increment_id
   end
   erb :index
 end
