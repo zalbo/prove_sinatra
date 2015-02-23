@@ -39,12 +39,15 @@ class Form
 
     errors
   end
-
-
 end
 
 
 f = Form.new
+@@id = 0
+
+def upgrate_id
+ @@id = @@id +  1
+end
 
 get "/" do
   @messages = f.messages
@@ -55,15 +58,16 @@ end
 post "/" do
   @messages = f.messages
   @errors = f.validate_form(params)
-
   if @errors.empty?
-    @messages << {email:params[:email] , message:params[:message].strip}
-  end
+    @messages << {email:params[:email] , message:params[:message].strip , id:@@id}
 
+  end
+  upgrate_id
   erb :index
 end
 
 get "/delete/:id" do
+  binding.pry
  f.messages.delete_at(params[:id].to_i)
  redirect('/')
 end
