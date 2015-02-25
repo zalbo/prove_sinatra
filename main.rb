@@ -3,7 +3,7 @@ require 'pry'
 
 
 class Form
-  attr_reader :messages, :id
+  attr_reader :messages
   def initialize
     @messages = []
     @id = 0
@@ -26,7 +26,6 @@ class Form
 
   def id
     @id += 1
-    @id
   end
 
   def validate_form(params)
