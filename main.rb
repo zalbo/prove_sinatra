@@ -66,6 +66,7 @@ post "/" do
 end
 
 get "/delete/:id" do
- f.messages.delete_at(params[:id].to_i)
+binding.pry
+ f.messages.delete_at(params[:id].to_i - 1 )
  redirect('/')
 end

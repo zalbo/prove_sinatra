@@ -10,10 +10,10 @@
 
 
 
+
 <% @messages.to_enum.with_index.reverse_each do |m, i| %>
 <hr>
-
 <p><%= m[:email] %> </p>
 <p><%= m[:message] %> </p>
-<p><a href="/delete/<%= i %>">delete<a/></p>
+<p><a href="/delete/<%= m[:id] %>">delete<a/></p>
 <% end %>
