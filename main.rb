@@ -61,12 +61,14 @@ post "/" do
   @errors = f.validate_form(params)
   if @errors.empty?
     @messages << {email:params[:email] , message:params[:message].strip , id: f.id}
+
   end
   erb :index
 end
 
 get "/delete/:id" do
-binding.pry
- f.messages.delete_at(params[:id].to_i - 1 )
+
+f.messages.delete_at(f.messages.index(f.messages.find {|x| x[:'id'] == params[:id].to_i}))
+
  redirect('/')
 end
