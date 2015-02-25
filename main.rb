@@ -3,9 +3,10 @@ require 'pry'
 
 
 class Form
-  attr_reader :messages
+  attr_reader :messages, :id
   def initialize
     @messages = []
+    @id = 0
   end
 
   def is_a_valid_email?(email)
@@ -21,6 +22,11 @@ class Form
     $ # End of string
     }xi # Case insensitive
     return (email =~ email_regex) == 0
+  end
+
+  def id
+    @id += 1
+    @id
   end
 
   def validate_form(params)
@@ -43,11 +49,6 @@ end
 
 
 f = Form.new
-@@id = 0
-
-def upgrate_id
- @@id = @@id +  1
-end
 
 get "/" do
   @messages = f.messages
@@ -59,15 +60,12 @@ post "/" do
   @messages = f.messages
   @errors = f.validate_form(params)
   if @errors.empty?
-    @messages << {email:params[:email] , message:params[:message].strip , id:@@id}
-
+    @messages << {email:params[:email] , message:params[:message].strip , id: f.id}
   end
-  upgrate_id
   erb :index
 end
 
 get "/delete/:id" do
-  binding.pry
  f.messages.delete_at(params[:id].to_i)
  redirect('/')
 end
