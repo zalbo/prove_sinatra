@@ -1,7 +1,6 @@
 require 'sinatra'
 require 'pry'
 
-
 class Form
   attr_reader :messages
   def initialize
@@ -9,7 +8,7 @@ class Form
     @id = 0
   end
 
-  def is_a_valid_email?(email)
+  def a_valid_email?(email)
     email_regex = %r{
     ^ # Start of string
     [0-9a-z] # First character
@@ -21,7 +20,7 @@ class Form
     [0-9a-z] # Domain name end
     $ # End of string
     }xi # Case insensitive
-    return (email =~ email_regex) == 0
+    (email =~ email_regex) == 0
   end
 
   def id
@@ -30,63 +29,58 @@ class Form
 
   def validate_form(params)
     errors = {}
-    if params[:email] == ""
-      errors[:email] = "email is empty"
+
+    errors[:email] = 'email is empty' if params[:email] == ''
+
+    if errors.empty? && !a_valid_email?(params[:email])
+      errors[:email] = 'email is not valid'
     end
 
-    if errors.empty? && !is_a_valid_email?(params[:email])
-      errors[:email] = "email is not valid"
-    end
-
-    if params[:message].strip == ""
-      errors[:message] = "message is empty"
-    end
+    errors[:message] = 'message is empty' if params[:message].strip == ''
 
     errors
   end
 end
 
-
 f = Form.new
 
-get "/" do
+get '/' do
   @messages = f.messages
   @errors = {}
   erb :index
 end
 
-post "/" do
+post '/' do
   @messages = f.messages
   @errors = f.validate_form(params)
 
   if @errors.empty?
-    @messages << {email:params[:email] , message:params[:message].strip , id: f.id}
+    @messages << { email: params[:email], message: params[:message].strip, id: f.id }
   end
 
   erb :index
 end
 
-get "/delete/:id" do
+get '/delete/:id' do
   f.messages.delete_if { |m| m[:id] == params[:id].to_i }
   redirect('/')
 end
 
-get "/edit/:id" do
+get '/edit/:id' do
   @message =  f.messages.find { |m| m[:id] == params[:id].to_i }
   @errors = {}
   erb :edit
 end
 
-post "/edit/:id" do
+post '/edit/:id' do
   @message =  f.messages.find { |m| m[:id] == params[:id].to_i }
   @errors = f.validate_form(params)
+
   if @errors.empty?
     @message[:message] = params[:message]
     @message[:email] = params[:email]
     redirect('/')
-  else
-    erb :edit
   end
 
-
+  erb :edit
 end
