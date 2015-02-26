@@ -1,12 +1,11 @@
 require 'sinatra'
-require 'pry'
+require 'sqlite3'
+
+db = SQLite3::Database.open 'zalbo.db'
+db.execute 'CREATE TABLE IF NOT EXISTS messages(id INTEGER PRIMARY KEY, message TEXT, email TEXT)'
 
 class Form
   attr_reader :messages
-  def initialize
-    @messages = []
-    @id = 0
-  end
 
   def a_valid_email?(email)
     email_regex = %r{
@@ -21,10 +20,6 @@ class Form
     $ # End of string
     }xi # Case insensitive
     (email =~ email_regex) == 0
-  end
-
-  def id
-    @id += 1
   end
 
   def validate_form(params)
@@ -45,40 +40,54 @@ end
 f = Form.new
 
 get '/' do
-  @messages = f.messages
+  stm = db.prepare 'SELECT * FROM messages ORDER BY id desc'
+  rs = stm.execute
+  @messages = []
+  rs.each do |row|
+    @messages << { id: row[0], message: row[1], email: row[2] }
+  end
+
   @errors = {}
   erb :index
 end
 
 post '/' do
-  @messages = f.messages
   @errors = f.validate_form(params)
 
   if @errors.empty?
-    @messages << { email: params[:email], message: params[:message].strip, id: f.id }
+    db.execute "INSERT INTO messages(email, message) VALUES ('#{params[:email]}', '#{params[:message].strip}')"
+  end
+
+  stm = db.prepare 'SELECT * FROM messages ORDER BY id desc'
+  rs = stm.execute
+  @messages = []
+  rs.each do |row|
+    @messages << { id: row[0], message: row[1], email: row[2] }
   end
 
   erb :index
 end
 
 get '/delete/:id' do
-  f.messages.delete_if { |m| m[:id] == params[:id].to_i }
+  db.execute "DELETE FROM  messages WHERE id = #{params[:id]}"
   redirect('/')
 end
 
 get '/edit/:id' do
-  @message =  f.messages.find { |m| m[:id] == params[:id].to_i }
+  stm = db.prepare "SELECT * FROM messages WHERE id = #{params[:id]}"
+  rs = stm.execute
+  rs.each do |row|
+    @message = { id: row[0], message: row[1], email: row[2] }
+  end
   @errors = {}
   erb :edit
 end
 
 post '/edit/:id' do
-  @message =  f.messages.find { |m| m[:id] == params[:id].to_i }
   @errors = f.validate_form(params)
 
   if @errors.empty?
-    @message[:message] = params[:message]
-    @message[:email] = params[:email]
+    db.execute "UPDATE messages SET email = '#{params[:email]}', message = '#{params[:message].strip}' WHERE id = #{params[:id]}"
     redirect('/')
   end
 

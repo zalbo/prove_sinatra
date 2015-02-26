@@ -11,7 +11,7 @@
 
 
 
-<% @messages.to_enum.with_index.reverse_each do |m, i| %>
+<% @messages.each do |m|%>
 <hr>
 <p><%= m[:email] %> </p>
 <p><%= m[:message] %> </p>
