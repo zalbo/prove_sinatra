@@ -61,35 +61,30 @@ post "/" do
 
   if @errors.empty?
     @messages << {email:params[:email] , message:params[:message].strip , id: f.id}
-
   end
+
   erb :index
 end
 
 get "/delete/:id" do
-f.messages.delete_if { |m| m[:id] == params[:id].to_i }
-redirect('/')
+  f.messages.delete_if { |m| m[:id] == params[:id].to_i }
+  redirect('/')
 end
 
 get "/edit/:id" do
-  @message =  f.messages.find { |m| m[:id] == params[:id].to_i }[:message]
-  @email = f.messages.find { |m| m[:id] == params[:id].to_i }[:email]
+  @message =  f.messages.find { |m| m[:id] == params[:id].to_i }
   @errors = {}
-
-
-erb :edit
+  erb :edit
 end
 
 post "/edit/:id" do
-  @messages = f.messages
+  @message =  f.messages.find { |m| m[:id] == params[:id].to_i }
   @errors = f.validate_form(params)
   if @errors.empty?
-    f.messages.find { |m| m[:id] == params[:id].to_i }[:message] = params[:message]
-    f.messages.find { |m| m[:id] == params[:id].to_i }[:email] = params[:email]
-    erb :index
+    @message[:message] = params[:message]
+    @message[:email] = params[:email]
+    redirect('/')
   else
-    @message =  f.messages.find { |m| m[:id] == params[:id].to_i }[:message]
-    @email = f.messages.find { |m| m[:id] == params[:id].to_i }[:email]
     erb :edit
   end
 
