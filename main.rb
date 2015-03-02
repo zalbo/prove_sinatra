@@ -1,5 +1,50 @@
 require 'sinatra'
+require 'active_record'
 require 'sqlite3'
+require 'logger'
+
+
+ActiveRecord::Base.logger = Logger.new(STDOUT) 
+
+ActiveRecord::Base.establish_connection(
+  :adapter => 'sqlite3',
+  :database => 'zalbo.db'
+)
+
+class CreateMessageMigration < ActiveRecord::Migration
+  def change
+    create_table :messages do |t|
+      t.text :email
+      t.text :message
+    end
+  end 
+end
+
+ActiveRecord::Migrator.migrate CreateMessageMigration
+
+begin 
+  CreateMessageMigration.new.migrate(:up)
+rescue ActiveRecord::StatementInvalid
+  puts "table messages already exists" 
+end
+
+
+class Message < ActiveRecord::Base
+  validates_presence_of :message
+  validates :email, format: { with: /\A[^@\s]+@([^@.\s]+\.)+[^@.\s]+\z/ }
+end
+
+
+
+Message.all.each do |message|
+  puts message.email
+  puts message.message
+end
+
+
+
+
+
 
 db = SQLite3::Database.open 'zalbo.db'
 db.execute 'CREATE TABLE IF NOT EXISTS messages(id INTEGER PRIMARY KEY, message TEXT, email TEXT)'
