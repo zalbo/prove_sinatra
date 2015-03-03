@@ -1,20 +1,22 @@
 <form action="/" method="POST">
+
   <h3> Email </h3>
+  <p><%= @errors_email %></p>
   <input type="text" name="email" value=<%= params[:email] %>>
-  <%= @errors[:email] %>
   <h3> Messaggio </h3>
+  <p><%= @errors_message %></p>
   <textarea rows="4" cols="50" input type="text" name="message" ><%= params[:message] %></textarea>
   <input type="submit" value="Inserisci ">
-  <%= @errors[:message] %>
+
 </form>
 
 
 
 
-<% @messages.each do |m|%>
+<% @messages.reverse_each do |m|%>
 <hr>
-<p><%= m[:email] %> </p>
-<p><%= m[:message] %> </p>
-<p><a href="/delete/<%= m[:id] %>">delete<a/></p>
-  <p><a href="/edit/<%=  m[:id] %>">edit<a/></p>
+<p><%= m.email %> </p>
+<p><%= m.message%> </p>
+<p><a href="/delete/<%= m.id %>">delete<a/></p>
+<p><a href="/edit/<%=  m.id %>">edit<a/></p>
 <% end %>
