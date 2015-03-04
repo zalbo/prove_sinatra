@@ -1,10 +1,10 @@
 <form action="/" method="POST">
 
   <h3> Email </h3>
-  <p><%= @errors_email %></p>
+  <p><%= @errors[:email]%></p>
   <input type="text" name="email" value=<%= params[:email] %>>
   <h3> Messaggio </h3>
-  <p><%= @errors_message %></p>
+</p><%= @errors[:message]%></p>
   <textarea rows="4" cols="50" input type="text" name="message" ><%= params[:message] %></textarea>
   <input type="submit" value="Inserisci ">
 

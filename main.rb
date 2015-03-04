@@ -40,20 +40,25 @@ Message.all.each do |message|
   puts message.message
 end
 
+
+
+
 db = SQLite3::Database.open 'zalbo.db'
 db.execute 'CREATE TABLE IF NOT EXISTS messages(id INTEGER PRIMARY KEY, message TEXT, email TEXT)'
 
 get '/' do
   @messages = Message.all()
+  m = Message.new
+  @errors = m.errors.messages
+
   erb :index
 end
 
 post '/' do
-  @messages = Message.all()
-  Message.create({ :message => params[:message].strip , :email => params[:email]})
-  @errors_message = Message.create.errors[:message]
-  @errors_email = Message.create.errors[:email]
-  erb :index
+ @messages = Message.all()
+ m = Message.create({ :message => params[:message].strip , :email => params[:email]})
+ @errors = m.errors.messages
+ erb :index
 end
 
 get '/delete/:id' do
@@ -63,13 +68,19 @@ end
 
 get '/edit/:id' do
   @message = Message.find(params[:id].to_i)
+  m = Message.new
+  @errors = m.errors.messages
   erb :edit
 end
 
 post '/edit/:id' do
   @messages = Message.all()
   @message = Message.find(params[:id].to_i)
-  Message.update(params[:id].to_i, :message => params[:message].strip , :email => params[:email])
-  @errors = Message.create.errors.full_messages
-  erb :index
+  m = Message.update(params[:id].to_i, :message => params[:message].strip , :email => params[:email])
+  @errors = m.errors.messages
+  if @errors.empty?
+    erb :index
+  else
+    erb :edit
+  end
 end
