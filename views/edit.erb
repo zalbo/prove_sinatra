@@ -1,9 +1,9 @@
 <form action="/edit/<%=params[:id]%>" method="POST">
   <h3>Edit Email </h3>
-  <p><%= @errors[:email]%></p>
+  <p><%= @message.errors.messages[:email]%></p>
   <input type="text" name="email" value=<%= @message.email  %>>
   <h3>Edit Messaggio </h3>
-  <p><%= @errors[:message]%></p>
+</p><%= @message.errors.messages[:message]%></p>
   <textarea rows="4" cols="50" input type="text" name="message" ><%= @message.message %></textarea>
   <input type="submit" value="Aggiorna">
 

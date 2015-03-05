@@ -35,29 +35,16 @@ class Message < ActiveRecord::Base
   validates :email, format: { with: /\A[^@\s]+@([^@.\s]+\.)+[^@.\s]+\z/ }
 end
 
-Message.all.each do |message|
-  puts message.email
-  puts message.message
-end
-
-
-
-
-db = SQLite3::Database.open 'zalbo.db'
-db.execute 'CREATE TABLE IF NOT EXISTS messages(id INTEGER PRIMARY KEY, message TEXT, email TEXT)'
-
 get '/' do
   @messages = Message.all()
-  m = Message.new
-  @errors = m.errors.messages
-
+  @message = Message.new
   erb :index
 end
 
 post '/' do
  @messages = Message.all()
- m = Message.create({ :message => params[:message].strip , :email => params[:email]})
- @errors = m.errors.messages
+ @message = Message.new({ :message => params[:message], :email => params[:email]})
+ @message.save
  erb :index
 end
 
@@ -68,17 +55,13 @@ end
 
 get '/edit/:id' do
   @message = Message.find(params[:id].to_i)
-  m = Message.new
-  @errors = m.errors.messages
   erb :edit
 end
 
 post '/edit/:id' do
   @messages = Message.all()
   @message = Message.find(params[:id].to_i)
-  m = Message.update(params[:id].to_i, :message => params[:message].strip , :email => params[:email])
-  @errors = m.errors.messages
-  if @errors.empty?
+  if @message.update_attributes(message: params[:message], email: params[:email])
     erb :index
   else
     erb :edit
